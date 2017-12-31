@@ -2,7 +2,14 @@
     <string name="app_name">Map6</string>
     <string name="title_activity_maps">Map</string>
 
+    <string-array name="meters">
+        <item>100</item>
+        <item>150</item>
+        <item>200</item>
+        <item>250</item>
+        <item>300</item>
 
+    </string-array>
     <string name="launch_activity">Launch activity</string>
     <string name="location_unknown">Location unknown</string>
     <string name="location_updates_label">Location Updates</string>
