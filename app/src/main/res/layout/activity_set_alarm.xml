@@ -38,22 +38,15 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name" />
-
-    <RadioButton
-        android:id="@+id/radioButton5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/remove_location_updates_button"
-        android:layout_below="@+id/editText"
-        android:layout_marginTop="32dp"
-        android:text="500" />
-
-    <RadioButton
-        android:id="@+id/radioButton6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/editText"
-        android:layout_alignTop="@+id/radioButton5"
-        android:text="1000" />
+    <Spinner
+        android:id="@+id/list"
+        android:layout_width="160dp"
+        android:layout_height="35dp"
+        android:dropDownWidth="match_parent"
+        android:entries="@android:drawable/arrow_down_float"
+        android:spinnerMode="dropdown"
+        android:layout_above="@+id/editText"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

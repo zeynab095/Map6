@@ -103,12 +103,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
        // mMap.setMyLocationEnabled(true);
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(40.393619, 49.848830);
+        LatLng sydney = new LatLng(40.474868, 49.768378);
 
          marker = mMap.addMarker(new MarkerOptions()
                 .position(sydney)
                 .draggable(true));
        // marker.setDraggable(true);
+       // mMap.setOnMarkerDragListener((GoogleMap.OnMarkerDragListener) this);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         // Zoom in, animating the camera.
         mMap.animateCamera(CameraUpdateFactory.zoomIn());
@@ -216,7 +217,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
          Log.i("main","works");
         // Log.i("A", String.valueOf(mMap.getMyLocation().getLatitude())+"  "+ mMap.getMyLocation().getLongitude());
-        marker.getPosition();
+
 
         Intent intent = new Intent(this, SetAlarmActivity.class);
         Bundle bundle = new Bundle();

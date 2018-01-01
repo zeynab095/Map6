@@ -307,6 +307,7 @@ public class LocationUpdatesService extends Service {
             alarmManager.set(AlarmManager.RTC, System.currentTimeMillis()+1000*2,pd);
             Toast.makeText(this, "Alarm fired", Toast.LENGTH_SHORT).show();
 
+            removeLocationUpdates();
         }
 
 
