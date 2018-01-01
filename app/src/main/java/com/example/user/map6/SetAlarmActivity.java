@@ -89,7 +89,7 @@ public class SetAlarmActivity extends AppCompatActivity implements
 
         ///////////////////////////
 
-        mRequestLocationUpdatesButton = (Button) findViewById(R.id.request_location_updates_button);
+        mRequestLocationUpdatesButton = (Button) findViewById(R.id.request_location_updates_button); //ok
         mRemoveLocationUpdatesButton = (Button) findViewById(R.id.remove_location_updates_button);
         mRequestLocationUpdatesButton.setEnabled(true);
         mRemoveLocationUpdatesButton.setEnabled(false);
@@ -104,16 +104,25 @@ public class SetAlarmActivity extends AppCompatActivity implements
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
-
         Bundle b1= getIntent().getExtras();
-        if(b1!=null) {
+        if(b1!=null&&b1.getString("name")!=null) {
             String name = b1.getString("name");
 
-            SharedPreferences sh1 = getSharedPreferences("MyOwnShared", MODE_PRIVATE);
+            SharedPreferences sh1 = getSharedPreferences("MyOwnShared", MODE_APPEND);
+
             String s1 = sh1.getString(name, "");
-            String[] arr = s1.split(",");
+            Log.d("String", s1);
+            String[] arr;
+            arr = s1.split(",");
+            Log.d("check0", arr[0]);
+            Log.d("check1", arr[1]);
+            Log.d("check2", arr[2]);
+            Log.d("check3", arr[3]);
             dest.setText(arr[0]);
-//            spinner.setSelection(Integer.parseInt(arr[1]));
+            spinner.setSelection(Integer.parseInt(arr[1]));
+            desLat=Float.parseFloat(arr[2]);
+            desLong=Float.parseFloat(arr[3]);
+
         }
 
         // Check that the user hasn't revoked permissions by going to Settings.
@@ -124,7 +133,7 @@ public class SetAlarmActivity extends AppCompatActivity implements
         }
     }
     public void saveData(View view) {
-        String s[]={dest.getText().toString(),String.valueOf(spinner.getSelectedItemPosition())};
+        String s[]={dest.getText().toString(),String.valueOf(spinner.getSelectedItemPosition()),Float.toString(desLat),Float.toString(desLong)};
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < s.length; i++) {
             sb.append(s[i]).append(",");
