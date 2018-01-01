@@ -19,26 +19,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-public class SetAlarmActivity extends AppCompatActivity implements
+public class MapActivity extends AppCompatActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
-    TextView dest;
-    Spinner spinner;
-    float desLat;
-    float desLong;
-    private static final String TAG = SetAlarmActivity.class.getSimpleName();
-    static Location loc;
+    private static final String TAG = MapActivity.class.getSimpleName();
 
     // Used in checking for runtime permissions.
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
     // The BroadcastReceiver used to listen from broadcasts from the service.
-    private SetAlarmActivity.MyReceiver myReceiver;
+    private MyReceiver myReceiver;
 
     // A reference to the service used to get location updates.
     private LocationUpdatesService mService = null;
@@ -70,60 +62,8 @@ public class SetAlarmActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        myReceiver = new SetAlarmActivity.MyReceiver();
-        setContentView(R.layout.activity_set_alarm);
-
-
-        loc=new Location("a");
-        ///////////////////////////
-        Bundle extras = getIntent().getExtras();
-        String value;
-        if (extras != null) {
-            value = String.valueOf(extras.getFloat("desLat"));
-            desLat=extras.getFloat("desLat");
-            desLong=extras.getFloat("desLong");
-        }
-
-        loc.setLatitude(desLat);
-        loc.setLongitude(desLong);
-
-        ///////////////////////////
-
-        mRequestLocationUpdatesButton = (Button) findViewById(R.id.request_location_updates_button); //ok
-        mRemoveLocationUpdatesButton = (Button) findViewById(R.id.remove_location_updates_button);
-        mRequestLocationUpdatesButton.setEnabled(true);
-        mRemoveLocationUpdatesButton.setEnabled(false);
-
-
-        dest=(TextView) findViewById(R.id.dest); //destination name to save to shared preferneces
-        spinner = (Spinner) findViewById(R.id.list);
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.meters, android.R.layout.simple_spinner_item);
-// Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-// Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
-        Bundle b1= getIntent().getExtras();
-        if(b1!=null&&b1.getString("name")!=null) {
-            String name = b1.getString("name");
-
-            SharedPreferences sh1 = getSharedPreferences("MyOwnShared", MODE_APPEND);
-
-            String s1 = sh1.getString(name, "");
-            Log.d("String", s1);
-            String[] arr;
-            arr = s1.split(",");
-            Log.d("check0", arr[0]);
-            Log.d("check1", arr[1]);
-            Log.d("check2", arr[2]);
-            Log.d("check3", arr[3]);
-            dest.setText(arr[0]);
-            spinner.setSelection(Integer.parseInt(arr[1]));
-            desLat=Float.parseFloat(arr[2]);
-            desLong=Float.parseFloat(arr[3]);
-
-        }
+        myReceiver = new MyReceiver();
+        setContentView(R.layout.activity_map);
 
         // Check that the user hasn't revoked permissions by going to Settings.
         if (Utils.requestingLocationUpdates(this)) {
@@ -132,17 +72,6 @@ public class SetAlarmActivity extends AppCompatActivity implements
             }
         }
     }
-    public void saveData(View view) {
-        String s[]={dest.getText().toString(),String.valueOf(spinner.getSelectedItemPosition()),Float.toString(desLat),Float.toString(desLong)};
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < s.length; i++) {
-            sb.append(s[i]).append(",");
-        }
-        SharedPreferences sh = getSharedPreferences("MyOwnShared",MODE_PRIVATE);
-        SharedPreferences.Editor myEdit =sh.edit();
-        myEdit.putString(dest.getText().toString(),sb.toString());
-        myEdit.commit();
-    }
 
     @Override
     protected void onStart() {
@@ -150,24 +79,15 @@ public class SetAlarmActivity extends AppCompatActivity implements
         PreferenceManager.getDefaultSharedPreferences(this)
                 .registerOnSharedPreferenceChangeListener(this);
 
-
+        mRequestLocationUpdatesButton = (Button) findViewById(R.id.request_location_updates_button);
+        mRemoveLocationUpdatesButton = (Button) findViewById(R.id.remove_location_updates_button);
 
         mRequestLocationUpdatesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mRequestLocationUpdatesButton.setEnabled(false);
-                mRemoveLocationUpdatesButton.setEnabled(true);
                 if (!checkPermissions()) {
                     requestPermissions();
                 } else {
-                    Intent intent = new Intent(LocationUpdatesService.class.getName());
-                    Bundle bundle = new Bundle();
-                    bundle.putFloat("desLat", desLat);
-                    bundle.putFloat("desLong", desLong);
-
-                    intent.putExtras(bundle);
-                    sendBroadcast(intent);
-
                     mService.requestLocationUpdates();
                 }
             }
@@ -176,14 +96,12 @@ public class SetAlarmActivity extends AppCompatActivity implements
         mRemoveLocationUpdatesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mRequestLocationUpdatesButton.setEnabled(true);
-                mRemoveLocationUpdatesButton.setEnabled(false);
                 mService.removeLocationUpdates();
             }
         });
 
         // Restore the state of the buttons when the activity (re)launches.
-
+        setButtonsState(Utils.requestingLocationUpdates(this));
 
         // Bind to the service. If the service is in foreground mode, this signals to the service
         // that since this activity is in the foreground, the service can exit foreground mode.
@@ -196,7 +114,6 @@ public class SetAlarmActivity extends AppCompatActivity implements
         super.onResume();
         LocalBroadcastManager.getInstance(this).registerReceiver(myReceiver,
                 new IntentFilter(LocationUpdatesService.ACTION_BROADCAST));
-       // setButtonsState(Utils.requestingLocationUpdates(this));
     }
 
     @Override
@@ -267,7 +184,7 @@ public class SetAlarmActivity extends AppCompatActivity implements
         public void onReceive(Context context, Intent intent) {
             Location location = intent.getParcelableExtra(LocationUpdatesService.EXTRA_LOCATION);
             if (location != null) {
-                Toast.makeText(SetAlarmActivity.this, Utils.getLocationText(location),
+                Toast.makeText(MapActivity.this, Utils.getLocationText(location),
                         Toast.LENGTH_SHORT).show();
             }
         }
