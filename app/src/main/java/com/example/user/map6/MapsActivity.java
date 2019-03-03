@@ -25,7 +25,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,LocationListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,LocationListener, GoogleMap.OnMarkerDragListener {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     LocationManager locationManager;
@@ -62,10 +62,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (location != null) {
 
             Log.i("Location info", "Location achieved");
-        } else Log.i("Location info", "Location failed");
+            lat = location.getLatitude();
+            lng = location.getLongitude();
+        } else{ Log.i("Location info", "Location failed");
 
-//        lat = location.getLatitude();
-  //      lng = location.getLongitude();
+            lat = 40.413048;
+            lng =   49.842140;
+
+        }
+
+
+
 
         //////////////////////////////////////////////////
         setContentView(R.layout.activity_maps);
@@ -101,14 +108,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         checkLocationPermission();
 
-       // mMap.setMyLocationEnabled(true);
+      // mMap.setMyLocationEnabled(true);
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(40.393619, 49.848830);
+        LatLng sydney = new LatLng(lat, lng);
 
          marker = mMap.addMarker(new MarkerOptions()
                 .position(sydney)
                 .draggable(true));
        // marker.setDraggable(true);
+        mMap.setOnMarkerDragListener(this);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         // Zoom in, animating the camera.
         mMap.animateCamera(CameraUpdateFactory.zoomIn());
@@ -227,6 +235,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // startActivity(intent);
         startActivity(intent);
 
+
+    }
+
+    @Override
+    public void onMarkerDragStart(Marker marker) {
+
+        lat = marker.getPosition().latitude;
+        lng = marker.getPosition().longitude;
+    }
+
+    @Override
+    public void onMarkerDrag(Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDragEnd(Marker marker) {
 
     }
 }

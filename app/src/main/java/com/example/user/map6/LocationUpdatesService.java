@@ -41,6 +41,7 @@ public class LocationUpdatesService extends Service {
     AlarmManager alarmManager;
     Intent i2;
     PendingIntent pd;
+    int dist;
     /**
      * The name of the channel for notifications.
      */
@@ -57,7 +58,7 @@ public class LocationUpdatesService extends Service {
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
 
     /**
      * The fastest rate for active location updates. Updates will never be more frequent
@@ -147,11 +148,14 @@ public class LocationUpdatesService extends Service {
 
 
 
-
+        dist=SetAlarmActivity.dist;
 
         boolean startedFromNotification = intent.getBooleanExtra(EXTRA_STARTED_FROM_NOTIFICATION,
                 false);
-
+        if(SetAlarmActivity.remove){
+            removeLocationUpdates();
+            stopSelf();
+        }
         // We got here because the user decided to remove location updates from the notification.
         if (startedFromNotification) {
             removeLocationUpdates();
@@ -295,7 +299,7 @@ public class LocationUpdatesService extends Service {
         Toast.makeText(this, "distancehi: "+String.valueOf(desLoc.distanceTo(location)),
                 Toast.LENGTH_LONG).show();
 
-        if(desLoc.distanceTo(location)<100){
+        if(desLoc.distanceTo(location)<dist){
            ///alarmmanager
             Toast.makeText(this, "you've reached your destination",
                     Toast.LENGTH_LONG).show();
@@ -306,6 +310,8 @@ public class LocationUpdatesService extends Service {
             pd  = PendingIntent.getBroadcast(this,0,i2,0);
             alarmManager.set(AlarmManager.RTC, System.currentTimeMillis()+1000*2,pd);
             Toast.makeText(this, "Alarm fired", Toast.LENGTH_SHORT).show();
+            removeLocationUpdates();
+            stopSelf();
 
         }
 

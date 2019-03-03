@@ -25,9 +25,9 @@
         android:layout_below="@+id/dest"
         android:layout_marginEnd="18dp"
         android:layout_marginTop="141dp"
-        android:background="@android:color/holo_blue_dark"
+
         android:text="OK"
-        android:textColor="@android:color/white"
+
         android:textSize="18sp" />
     <!--<Button-->
         <!--android:id="@+id/remove_location_updates_button"-->
@@ -44,9 +44,9 @@
         android:layout_alignBaseline="@+id/request_location_updates_button"
         android:layout_alignBottom="@+id/request_location_updates_button"
         android:layout_centerHorizontal="true"
-        android:background="@android:color/holo_blue_dark"
+
         android:text="Cancel"
-        android:textColor="@android:color/background_light"
+
         android:textSize="18sp" />
 
     <!--<EditText-->

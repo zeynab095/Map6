@@ -1,6 +1,7 @@
 package com.example.user.map6;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -33,6 +34,8 @@ public class SetAlarmActivity extends AppCompatActivity implements
     float desLong;
     private static final String TAG = SetAlarmActivity.class.getSimpleName();
     static Location loc;
+    static int dist;
+    static boolean remove;
 
     // Used in checking for runtime permissions.
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
@@ -108,7 +111,7 @@ public class SetAlarmActivity extends AppCompatActivity implements
         if(b1!=null&&b1.getString("name")!=null) {
             String name = b1.getString("name");
 
-            SharedPreferences sh1 = getSharedPreferences("MyOwnShared", MODE_APPEND);
+            @SuppressLint("WrongConstant") SharedPreferences sh1 = getSharedPreferences("MyOwnShared", MODE_APPEND);
 
             String s1 = sh1.getString(name, "");
             Log.d("String", s1);
@@ -155,19 +158,21 @@ public class SetAlarmActivity extends AppCompatActivity implements
         mRequestLocationUpdatesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                remove=false;
                 mRequestLocationUpdatesButton.setEnabled(false);
                 mRemoveLocationUpdatesButton.setEnabled(true);
                 if (!checkPermissions()) {
                     requestPermissions();
                 } else {
-                    Intent intent = new Intent(LocationUpdatesService.class.getName());
+                   /* Intent intent = new Intent(LocationUpdatesService.class.getName());
                     Bundle bundle = new Bundle();
                     bundle.putFloat("desLat", desLat);
                     bundle.putFloat("desLong", desLong);
 
                     intent.putExtras(bundle);
-                    sendBroadcast(intent);
+                    sendBroadcast(intent);*/
 
+                    dist=Integer.parseInt((String) spinner.getSelectedItem());
                     mService.requestLocationUpdates();
                 }
             }
@@ -178,6 +183,7 @@ public class SetAlarmActivity extends AppCompatActivity implements
             public void onClick(View view) {
                 mRequestLocationUpdatesButton.setEnabled(true);
                 mRemoveLocationUpdatesButton.setEnabled(false);
+                remove=true;
                 mService.removeLocationUpdates();
             }
         });
@@ -267,8 +273,7 @@ public class SetAlarmActivity extends AppCompatActivity implements
         public void onReceive(Context context, Intent intent) {
             Location location = intent.getParcelableExtra(LocationUpdatesService.EXTRA_LOCATION);
             if (location != null) {
-                Toast.makeText(SetAlarmActivity.this, Utils.getLocationText(location),
-                        Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(SetAlarmActivity.this, Utils.getLocationText(location)Toast.LENGTH_SHORT).show();
             }
         }
     }
